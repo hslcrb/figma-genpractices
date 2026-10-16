@@ -1,0 +1,57 @@
+name: Import Figma assets
+on:
+  push:
+    branches: [main]
+    paths: ["sources/figma-assets.json", ".github/workflows/figma-assets.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: figma-assets
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download original Figma assets
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, subprocess, hashlib
+          manifest = pathlib.Path('sources/figma-assets.json')
+          if not manifest.exists():
+              print('Waiting for asset manifest.'); raise SystemExit(0)
+          records = json.loads(manifest.read_text())
+          for item in records:
+              dest = pathlib.Path(item['path'])
+              if not str(dest).startswith('public/assets/') or '..' in dest.parts:
+                  raise ValueError('Invalid asset path')
+              if not item['url'].startswith('https://www.figma.com/api/mcp/asset/'):
+                  raise ValueError('Invalid asset source')
+              if dest.exists() and dest.stat().st_size > 0:
+                  continue
+              dest.parent.mkdir(parents=True, exist_ok=True)
+              subprocess.run(['curl', '-fL', '--retry', '3', '--max-time', '60', item['url'], '-o', str(dest)], check=True)
+              if dest.stat().st_size < 30:
+                  raise ValueError('Empty asset: ' + str(dest))
+          hashes = {item['path']: hashlib.sha256(pathlib.Path(item['path']).read_bytes()).hexdigest() for item in records}
+          pathlib.Path('sources/asset-hashes.json').write_text(json.dumps(hashes, indent=2) + '\n')
+          PY
+      - name: Commit permanent local assets
+        run: |
+          if [ ! -d public/assets ]; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/assets sources/asset-hashes.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'assets: vendor original Figma imagery and SVGs'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - uses: actions/upload-artifact@v4
+        if: ${{ hashFiles('public/assets/**') != '' }}
+        with:
+          name: figma-original-assets
+          path: public/assets/
+          retention-days: 3
