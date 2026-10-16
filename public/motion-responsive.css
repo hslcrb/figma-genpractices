@@ -1,0 +1,8 @@
+/* Keep the rotating ornament inside the mobile title without horizontal overflow. */
+@media (max-width:760px) {
+ .gallery-intro { position:relative; display:block; }
+ .gallery-intro>div:first-child { width:100%; min-width:0; }
+ .gallery-intro .intro-note { position:absolute; right:12px; top:58px; }
+ .gallery-intro .orbit { font-size:38px; }
+ .gallery-intro h1 { font-size:clamp(76px,22vw,100px); }
+}
