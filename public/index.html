@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f4f3ed"><meta name="description" content="Three interactive Figma community design studies. Area, Running for Change, and Aetherfield.">
+<title>Figma 실험실 — Selected Sites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text&family=DM+Sans:wght@400;500;700&family=Geist+Mono:wght@400;500&family=Radio+Canada+Big:wght@400;500&family=Righteous&family=Roboto+Flex:wght@500;600&family=Roboto+Mono:wght@400;500&family=Source+Serif+Pro&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css"><script type="module" src="./app.mjs"></script>
+</head>
+<body>
+<a class="skip" href="#main-content">Skip to content</a>
+<div id="app"></div>
+<dialog id="contact-dialog" aria-labelledby="dialog-title">
+<button class="dialog-close" data-close aria-label="Close dialog">×</button>
+<p class="eyebrow">INTERACTIVE DESIGN STUDY</p><h2 id="dialog-title"></h2>
+<p id="dialog-description">Try the form interaction. This is a local demo; no data is sent or stored.</p>
+<form id="demo-form"><label>Your name<input name="name" autocomplete="name" required maxlength="100"></label><label>Email address<input name="email" type="email" autocomplete="email" required maxlength="254"></label><button class="button" type="submit">Preview request ↗</button><p id="form-status" role="status" aria-live="polite"></p></form>
+</dialog>
+<noscript><main><h1>Figma 실험실</h1><p>Enable JavaScript to browse these three interactive design studies.</p></main></noscript>
+</body></html>
